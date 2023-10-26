@@ -66,7 +66,7 @@ function delete_outdated_logs {
         echo -e "\e[33m即將刪除最舊的 $num_logs_to_delete 篇日誌：\e[0m"
         echo -e "\e[37m$oldest_logs\e[0m"
         echo
-        echo -e "\e[47m\e[33m是否確定刪除? (y/n):\e[0m\e[49m "
+        echo -e "\e[47m\e[30m是否確定刪除? (y/n):\e[0m\e[49m "
         read userInput
 
         if [[ "$userInput" == "y" ]]; then
