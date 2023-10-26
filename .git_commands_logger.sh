@@ -63,10 +63,10 @@ function delete_outdated_logs {
         local oldest_logs=$(ls -t "$log_directory/${repo_name}_git_commands_"*.log 2>/dev/null | tail -$num_logs_to_delete)
         local oldest_logs_arr=("$=oldest_logs")
 
-        echo -e "\e[33m即將刪除最舊的 $num_logs_to_delete 篇日誌：\e[0m"
+        echo -e "\e[33m由於日誌數量已超過上限的 $max_log_cache 篇:\e[0m"
         echo -e "\e[37m$oldest_logs\e[0m"
         echo
-        echo -e "\e[47m\e[30m是否確定刪除? (y/n):\e[0m\e[49m "
+        echo -e "\e[47m\e[30m請問是否要將上述最舊的 $num_logs_to_delete 篇日誌刪除? (y/n):\e[0m\e[49m "
         read userInput
 
         if [[ "$userInput" == "y" ]]; then
