@@ -48,7 +48,7 @@ function delete_outdated_logs {
         fi
     fi
 
-    # 檢查日誌檔案是否超過n篇, 若超過則刪除一半的日誌文件
+    # 檢查日誌檔案是否超過n篇, 若超過則只保留n/2篇的日誌, 剩下的刪除
     logs_count=$(ls -1 "$log_directory/${repo_name}_git_commands_"*.log 2>/dev/null | wc -l)
     if [ "$logs_count" -gt $max_log_cache ]; then
         local num_logs_to_keep=0
