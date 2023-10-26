@@ -87,7 +87,7 @@ function delete_outdated_logs {
 
 function setup_git_commands_logging {
     local timestamp=$(date "+%Y/%m/%d %H:%M:%S")
-    initial=0
+    local initial=0
     current_command=""
 
     function my_preexec() {
