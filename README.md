@@ -14,7 +14,7 @@ git command logger shell(zsh)
         source $gitCommandLogger
     }
     ```
-2. `git clone`本專案，並放置在並放置在使用者的主目錄($HOME)底下
+2. `git clone`本專案，並放置在使用者的主目錄($HOME)底下
 
 ## 使用方法與注意事項
 
