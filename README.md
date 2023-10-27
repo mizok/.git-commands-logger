@@ -10,8 +10,10 @@ git command logger shell(zsh)
     ```shell
     gitCommandLogger=$HOME/.git_commands_logger/.git_commands_logger.sh;
     source $gitCommandLogger
-    function chpwd() {
+    function chpwd {
+        if [[ "$PWD" != "$OLDPWD" ]]; then
         source $gitCommandLogger
+        fi
     }
     ```
 2. `git clone`本專案，並放置在使用者的主目錄($HOME)底下
