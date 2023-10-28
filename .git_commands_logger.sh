@@ -1,22 +1,5 @@
 #!/bin/zsh
 
-function record_git_commands {
-    local command="$1" # 取得目前執行的命令
-    local timestamp=$(date "+%Y:%m:%d:%H:%M:%S")
-    if [[ $command == "git "* || $command == "git."* ]]; then
-
-        # 記錄命令到日誌文件
-        echo "[$timestamp] $command" >>"$log_file"
-
-        # 如果是git co或git checkout指令，追加特定資訊到日誌文件
-        if [[ $command == "git co "* || $command == "git checkout "* ]]; then
-            local branch_or_commit=$(git symbolic-ref -q --short HEAD || git describe --tags --exact-match)
-            echo ">>>>  現在位於 $branch_or_commit 分支/commit 點" >>"$log_file"
-        fi
-
-    fi
-}
-
 function delete_outdated_logs {
     # log保存數量上限
     local max_log_cache=30
@@ -87,8 +70,10 @@ function delete_outdated_logs {
 
 function setup_git_commands_logging {
     local timestamp=$(date "+%Y/%m/%d %H:%M:%S")
-    local initial=0
+    local initialized=false
+    local log_file=""
     current_command=""
+    git_command_targeted=false
 
     function my_preexec() {
         # 在執行命令之前執行的程式碼
@@ -96,10 +81,29 @@ function setup_git_commands_logging {
         current_command=$1
     }
 
+    function record_git_commands {
+        local command="$1" # 取得目前執行的命令
+        local timestamp=$(date "+%Y:%m:%d:%H:%M:%S")
+        if [[ $command == "git "* || $command == "git."* ]]; then
+
+            git_command_targeted=true
+
+            # 記錄命令到日誌文件
+            echo "[$timestamp] $command" >>"$log_file"
+
+            # 如果是git co或git checkout指令，追加特定資訊到日誌文件
+            if [[ $command == "git co "* || $command == "git checkout "* ]]; then
+                local branch_or_commit=$(git symbolic-ref -q --short HEAD || git describe --tags --exact-match)
+                echo ">>>>  現在位於 $branch_or_commit 分支/commit 點" >>"$log_file"
+            fi
+
+        fi
+    }
+
     # 取得Git倉庫的根目錄名
     if [ -d .git ] || git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-        repo_name=$(basename "$(git rev-parse --show-toplevel)")
-        log_directory="$HOME/.git_commands_logger/logs/$repo_name"
+        local repo_name=$(basename "$(git rev-parse --show-toplevel)")
+        local log_directory="$HOME/.git_commands_logger/logs/$repo_name"
 
         # 如果日誌資料夾不存在，則建立它
         if [ ! -d "$log_directory" ]; then
@@ -125,15 +129,35 @@ function setup_git_commands_logging {
 
         # 設定precmd鉤子，使得每次指令結束後都會呼叫record_git_commands函數
         precmd() {
-            if [[ "$initial" == "0" ]]; then
-                initial=1
+            if [[ $initialized ]]; then
+                initialized=true
             else
                 record_git_commands $current_command
             fi
 
         }
 
+        # # 設定終端機關閉時的trap
+        # trap cleanup_on_exit SIGQUIT
+
+        # # 設定終端機關閉時的處理程序
+        # function cleanup_on_exit {
+        #     if [[ $delete_log_on_exit && ! $git_command_targeted ]]; then
+        #         echo "未記錄任何Git命令，刪除當前的日誌文件: $log_file"
+        #         rm -f "$log_file"
+        #     fi
+        #      trap - SIGQUIT
+             
+        # }
     fi
+
+
 }
 
 setup_git_commands_logging
+
+function chpwd {
+    if [[ "$PWD" != "$OLDPWD" ]]; then
+        setup_git_commands_logging
+    fi
+}
