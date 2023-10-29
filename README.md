@@ -5,12 +5,12 @@ git command logger shell(zsh)
 
 ## 安裝方法
 
-1. 把這一段`shell(zsh)` 複製到`.zshrc`內部
-    ```shell
-    gitCommandLogger=$HOME/.git_commands_logger/.git_commands_logger.sh;
-    source $gitCommandLogger
-    ```
-2. `git clone`本專案，並放置在使用者的主目錄(`$HOME`)底下
+請執行以下程序
+
+```zsh
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/mizok/.git-commands-logger/main/installer.sh)"
+```
+
 
 ## 使用方法與注意事項
 
