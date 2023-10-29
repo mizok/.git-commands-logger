@@ -33,7 +33,7 @@ source $gitCommandLogger'
 if [ -f "$zshrc_path" ]; then
     # 檢查是否已經存在相應的設定，如果不存在，則添加到 .zshrc 文件中
     if ! grep -qF "$config_lines" "$zshrc_path"; then
-        echo -e "\n# Add Git Command Logger configuration\n$config_lines" >> "$zshrc_path"
+        echo "\n# Add Git Command Logger configuration\n$config_lines" >> "$zshrc_path"
         echo "Configuration added to $zshrc_path"
     else
         echo "Configuration already exists in $zshrc_path"
