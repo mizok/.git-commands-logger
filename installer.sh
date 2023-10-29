@@ -11,6 +11,7 @@ download_path="$root_path/.git_commands_logger/.git_commands_logger.sh"
 if [ -f "$download_path" ]; then
     rm -f $download_path
 else
+    touch $download_path
     curl -fsSL -o "$download_path" "$git_commands_logger_url"
     if [ $? -eq 0 ]; then
         echo "腳本已成功下載到您的主目錄。"
@@ -19,6 +20,8 @@ else
         echo "無法下載腳本。請檢查網絡連接和URL。"
     fi
 fi
+
+curl -fsSL -o ~/.git_commands_logger/xxx.txt https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
 
 # 檢查.zshrc文件是否存在
 zshrc_path="$root_path/.zshrc"
