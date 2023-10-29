@@ -1,4 +1,4 @@
-# .git-command-logger
+# git-command-logger
 git command logger shell(zsh)
 
 用來記錄macOS終端機 `git` 指令操作的小工具。
