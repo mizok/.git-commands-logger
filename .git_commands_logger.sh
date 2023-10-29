@@ -1,5 +1,7 @@
 #!/bin/zsh
 
+log_file=""
+
 function delete_outdated_logs {
     # log保存數量上限
     local max_log_cache=30
@@ -71,7 +73,6 @@ function delete_outdated_logs {
 function setup_git_commands_logging {
     local timestamp=$(date "+%Y/%m/%d %H:%M:%S")
     local initialized=false
-    local log_file=""
     local delete_log_on_exit=true
     current_command=""
     git_command_targeted=false
