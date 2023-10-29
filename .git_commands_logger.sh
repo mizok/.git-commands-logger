@@ -72,7 +72,7 @@ function setup_git_commands_logging {
     local timestamp=$(date "+%Y/%m/%d %H:%M:%S")
     local initialized=false
     local log_file=""
-    delete_log_on_exit=true
+    local delete_log_on_exit=true
     current_command=""
     git_command_targeted=false
 
@@ -138,17 +138,12 @@ function setup_git_commands_logging {
 
         }
 
-        # # 設定終端機關閉時的trap
-        # trap cleanup_on_exit SIGQUIT
-
-        # # 設定終端機關閉時的處理程序
-        # function cleanup_on_exit {
+        # 設定終端機關閉時的處理程序
+        # function TRAPHUP {
         #     if [[ $delete_log_on_exit && ! $git_command_targeted ]]; then
         #         echo "未記錄任何Git命令，刪除當前的日誌文件: $log_file"
         #         rm -f "$log_file"
         #     fi
-        #      trap - SIGQUIT
-             
         # }
     fi
 
