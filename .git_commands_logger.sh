@@ -1,6 +1,10 @@
 #!/bin/zsh
 
+#如果通配符無法匹配到任何檔案時，會產生“no matches found”的錯誤, 設置NO_NOMATCH 以避開錯誤狀況
+setopt NO_NOMATCH 
+
 log_file=""
+repo_name=""
 
 function delete_outdated_logs {
     # log保存數量上限
@@ -9,27 +13,29 @@ function delete_outdated_logs {
     local max_log_preserve_day=7
     # 檢查並刪除超過n天的日誌文件
     local latest_log=$(ls -t "$log_directory/${repo_name}_git_commands_"*.log 2>/dev/null | head -1)
-    # 從檔案路徑中提取日期部分（假設日期部分的格式固定）
-    local date_part=$(echo "$latest_log" | grep -oE '[0-9]{14}')
-    local date_current=$(date "+%Y%m%d%H%M%S")
-    # 將日期轉換為Unix時間戳記（以秒為單位）
-    local latest_log_timestamp=$(date -j -f "%Y%m%d%H%M%S" "$date_part" "+%s")
-    local current_timestamp=$(date -j -f "%Y%m%d%H%M%S" "$date_current" "+%s")
-    local days_difference=$(((current_timestamp - latest_log_timestamp) / 86400)) # 86400 seconds in a day
+    if [ -n "$latest_log" ]; then
+        # 從檔案路徑中提取日期部分（假設日期部分的格式固定）
+        local date_part=$(echo "$latest_log" | grep -oE '[0-9]{14}')
+        local date_current=$(date "+%Y%m%d%H%M%S")
+        # 將日期轉換為Unix時間戳記（以秒為單位）
+        local latest_log_timestamp=$(date -j -f "%Y%m%d%H%M%S" "$date_part" "+%s")
+        local current_timestamp=$(date -j -f "%Y%m%d%H%M%S" "$date_current" "+%s")
+        local days_difference=$(((current_timestamp - latest_log_timestamp) / 86400)) # 86400 seconds in a day
 
-    if [ "$days_difference" -gt $max_log_preserve_day ]; then
-        echo -e "\e[33此專案的日誌皆已過期 $max_log_preserve_day 天以上，請問是否刪除所有日誌檔案？ (y/n):\e[0m"
-        read userInput
+        if [ "$days_difference" -gt $max_log_preserve_day ]; then
+            echo -e "\e[33此專案的日誌皆已過期 $max_log_preserve_day 天以上，請問是否刪除所有日誌檔案？ (y/n):\e[0m"
+            read userInput
 
-        if [[ "$userInput" == "y" ]]; then
-            rm "$log_directory/${repo_name}_git_commands_"*.log
-            echo
-            echo "已刪除所有過期的日誌檔案。"
-            echo
-        else
-            echo
-            echo "取消刪除。"
-            echo
+            if [[ "$userInput" == "y" ]]; then
+                rm "$log_directory/${repo_name}_git_commands_"*.log
+                echo
+                echo "已刪除所有過期的日誌檔案。"
+                echo
+            else
+                echo
+                echo "取消刪除。"
+                echo
+            fi
         fi
     fi
 
@@ -85,13 +91,20 @@ function setup_git_commands_logging {
 
     function record_git_commands {
         local command="$1" # 取得目前執行的命令
-        local timestamp=$(date "+%Y:%m:%d:%H:%M:%S")
+        local timestamp=$(date "+%Y/%m/%d %H:%M:%S")
         if [[ $command == "git "* || $command == "git."* ]]; then
-
-            git_command_targeted=true
+            if [  $git_command_targeted == false ]; then
+                # 在日誌檔案中寫入開啟項目的訊息
+                echo "偵測到 $repo_name 專案出現 git 指令操作, 現在時間 $timestamp " >> "$log_file"
+                echo " " >> "$log_file"
+                echo "---" >> "$log_file"
+                echo " " >> "$log_file"
+                git_command_targeted=true
+            fi
 
             # 記錄命令到日誌文件
-            echo "[$timestamp] $command" >>"$log_file"
+
+            echo "[$timestamp] $command" >> "$log_file"
 
             # 如果是git co或git checkout指令，追加特定資訊到日誌文件
             if [[ $command == "git co "* || $command == "git checkout "* ]]; then
@@ -104,7 +117,7 @@ function setup_git_commands_logging {
 
     # 取得Git倉庫的根目錄名
     if [ -d .git ] || git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-        local repo_name=$(basename "$(git rev-parse --show-toplevel)")
+        repo_name=$(basename "$(git rev-parse --show-toplevel)")
         local log_directory="$HOME/.git_commands_logger/logs/$repo_name"
 
         # 如果日誌資料夾不存在，則建立它
@@ -115,11 +128,6 @@ function setup_git_commands_logging {
         # 產生日誌檔名
         log_file="$log_directory/${repo_name}_git_commands_$(date +%Y%m%d%H%M%S).log"
 
-        # 在日誌檔案中寫入開啟項目的訊息
-        echo "已經開啟 $repo_name 專案, 現在時間$timestamp , 開始即時記錄git的相關操作" >>"$log_file"
-        echo " " >>"$log_file"
-        echo "---" >>"$log_file"
-        echo " " >>"$log_file"
         echo "\e[42m\e[30m已經打開 $repo_name 專案, 開始即時記錄git的相關操作\e[0m\e[49m"
 
         #刪除過期的log
@@ -139,15 +147,7 @@ function setup_git_commands_logging {
 
         }
 
-        # 設定終端機關閉時的處理程序
-        # function TRAPHUP {
-        #     if [[ $delete_log_on_exit && ! $git_command_targeted ]]; then
-        #         echo "未記錄任何Git命令，刪除當前的日誌文件: $log_file"
-        #         rm -f "$log_file"
-        #     fi
-        # }
     fi
-
 
 }
 
