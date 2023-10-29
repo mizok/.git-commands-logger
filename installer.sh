@@ -27,8 +27,8 @@ fi
 
 # 添加到 .zshrc 文件中
 zshrc_path="$root_path/.zshrc"
-config_lines="gitCommandLogger=\$root_path/.git_commands_logger/.git_commands_logger.sh;
-source \$gitCommandLogger"
+config_lines="gitCommandLogger=$root_path"'/.git_commands_logger/.git_commands_logger.sh;
+source $gitCommandLogger'
 
 if [ -f "$zshrc_path" ]; then
     # 檢查是否已經存在相應的設定，如果不存在，則添加到 .zshrc 文件中
