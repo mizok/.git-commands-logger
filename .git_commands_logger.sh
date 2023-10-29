@@ -5,6 +5,7 @@ setopt NO_NOMATCH
 
 log_file=""
 repo_name=""
+root_path=${ZDOTDIR:-$HOME}
 
 function delete_outdated_logs {
     # log保存數量上限
@@ -118,7 +119,7 @@ function setup_git_commands_logging {
     # 取得Git倉庫的根目錄名
     if [ -d .git ] || git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
         repo_name=$(basename "$(git rev-parse --show-toplevel)")
-        local log_directory="$HOME/.git_commands_logger/logs/$repo_name"
+        local log_directory="$root_path/.git_commands_logger/logs/$repo_name"
 
         # 如果日誌資料夾不存在，則建立它
         if [ ! -d "$log_directory" ]; then
