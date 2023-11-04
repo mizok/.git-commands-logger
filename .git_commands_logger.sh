@@ -8,10 +8,6 @@ repo_name=""
 root_path=${ZDOTDIR:-$HOME}
 days_to_keep_logs=7
 
-function delete_outdated_logs {
-    # 刪除超過N天的日誌文件
-    find "$log_directory" -type f -name "${repo_name}_git_commands_*.log" -mtime +$days_to_keep_logs -exec rm {} \;
-}
 
 function setup_git_commands_logging {
     local timestamp=$(date "+%Y/%m/%d %H:%M:%S")
@@ -32,8 +28,8 @@ function setup_git_commands_logging {
         local last_entry_timestamp=$(get_last_entry_timestamp)
         local current_timestamp=$(date -u -d "$timestamp" +%s)
         local last_entry_timestamp=$(date -u -d "$last_entry_timestamp" +%s)
-        local time_diff=$(((current_timestamp - last_entry_timestamp) / 3600)) 
-        
+        local time_diff=$(((current_timestamp - last_entry_timestamp) / 3600))
+
         if [[ $time_diff -gt X ]]; then
             echo "==================="
         fi
@@ -74,8 +70,8 @@ function setup_git_commands_logging {
 
         echo "\e[42m\e[30m已經打開 $repo_name 專案, 開始即時記錄git的相關操作\e[0m\e[49m"
 
-        # 删除超过N天的日志文件
-        delete_outdated_logs
+        # 删除超過N天的日誌條目
+        find "$log_directory" -type f -name "${repo_name}_git_commands_*.log" -mtime +$days_to_keep_logs -exec rm {} \;
 
         # 自訂鉤子，使得每次指令結束後都會呼叫my_preexec函數
         autoload -U add-zsh-hook
