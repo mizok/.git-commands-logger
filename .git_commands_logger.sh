@@ -149,13 +149,13 @@ function setup_git_commands_logging {
         }
 
         if check＿if_exist_outdated_logs; then
-            echo -e "[git command logger] 偵測到存在 $days_to_keep_logs 天以前的舊日誌條目, 請問是否刪除? (y/n)"
+            echo -e "\e[33m[git command logger] 偵測到存在 $days_to_keep_logs 天以前的舊日誌條目, 請問是否刪除? (y/n)\e[0m"
             read userInput
 
             if [[ $userInput ]]; then
                 # 處理日誌文件
                 process_log_file
-                echo "已刪除 $days_to_keep_logs 天以前的舊日誌條目。"
+                echo "\e[32m已刪除 $days_to_keep_logs 天以前的舊日誌條目。\e[0m"
             else
                 echo "取消刪除。"
             fi
