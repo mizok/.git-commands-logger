@@ -7,7 +7,8 @@ log_file=""
 repo_name=""
 root_path=${ZDOTDIR:-$HOME}
 days_to_keep_logs=7
-
+branch_remind_prefix=">>>>>>>"
+time_diff_remind="====================="
 
 function setup_git_commands_logging {
     local timestamp=$(date "+%Y/%m/%d %H:%M:%S")
@@ -22,13 +23,46 @@ function setup_git_commands_logging {
         current_command=$1
     }
 
+    # 找到 log 文件中最新的命令執行紀錄
+    function find_latest_command_timestamp {
+        local timestamp=$(date "+%Y/%m/%d %H:%M:%S")
+        local current_timestamp=$(date -j -f "$timestamp" +%s)
+        local latest_command=""
+        local is_new_command=true
+        local latest_command_timestamp=$current_timestamp
+
+        # 讀取 log 文件，按行解析
+        while IFS= read -r line; do
+            if [[ "$line" == "======="* ]]; then
+                # 遇到分隔線，表示上一條命令執行的時間距離現在超過固定時數
+                is_new_command=false
+            elif [[ "$line" == ">>>>>>>>"* ]]; then
+                # 遇到包含">>>>>>>"的行，表示上一條命令是切換分支的命令
+                is_new_command=true
+                latest_command="${line//>*/}"
+            elif [[ "$line" == "["* && "$line" != "======="* ]]; then
+                # 遇到日期行，表示一條新的命令
+                if [[ $is_new_command == true ]]; then
+                    latest_command="$line"
+                    # 提取日期部分（假設日期部分的格式固定）
+                    local date_part=$(echo "$line" | grep -oE '\[.*\]')
+                    # 將日期轉換為Unix時間戳記（以秒為單位）
+                    latest_command_timestamp=$(date -j -f "[%Y/%m/%d %H:%M:%S]" "$date_part" "+%s")
+                fi
+            fi
+        done <"$log_file"
+
+        return $latest_command_timestamp
+    }
+
     function record_git_commands {
         local command="$1" # 取得目前執行的命令
         local timestamp=$(date "+%Y/%m/%d %H:%M:%S")
-        local last_entry_timestamp=$(get_last_entry_timestamp)
-        local current_timestamp=$(date -u -d "$timestamp" +%s)
-        local last_entry_timestamp=$(date -u -d "$last_entry_timestamp" +%s)
-        local time_diff=$(((current_timestamp - last_entry_timestamp) / 3600))
+        find_latest_command_timestamp
+        local last_entry_timestamp=$?
+        local current_timestamp=$(date -j -f "$timestamp" +%s)
+        local last_entry_timestamp=$(date -j -f "$last_entry_timestamp" +%s)
+        local time_diff=$(((current_timestamp - last_entry_timestamp) / 86400))
 
         if [[ $time_diff -gt X ]]; then
             echo "==================="
@@ -50,7 +84,7 @@ function setup_git_commands_logging {
             # 如果是git co或git checkout指令，追加特定資訊到日誌文件
             if [[ $command == "git co "* || $command == "git checkout "* ]]; then
                 local branch_or_commit=$(git symbolic-ref -q --short HEAD || git describe --tags --exact-match)
-                # echo "----  現在位於 $branch_or_commit 分支/commit 點" >> "$log_file"
+                echo ">>>>>  現在位於 $branch_or_commit 分支/commit 點" >> "$log_file"
             fi
         fi
     }
@@ -66,7 +100,7 @@ function setup_git_commands_logging {
         fi
 
         # 產生日誌檔名
-        log_file="$log_directory/${repo_name}_git_commands_$(date +%Y%m%d%H%M%S).log"
+        log_file="$log_directory/${repo_name}_git_commands.log"
 
         echo "\e[42m\e[30m已經打開 $repo_name 專案, 開始即時記錄git的相關操作\e[0m\e[49m"
 
