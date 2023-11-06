@@ -22,10 +22,15 @@ set_global_hooks() {
     commit_msg_hooks_content=$(curl -s "$remotePrefix/hooks/commit-msg")
     local_commit_msg_hook_file="$hooks_path/commit-msg"
 
+    if [[ -e $local_commit_msg_hook_file ]]; then
+        touch $local_commit_msg_hook_file
+    fi
+
     if ! grep -qF "$commit_msg_hooks_content" "$local_commit_msg_hook_file"; then
         echo "$commit_msg_hooks_content" >> $local_commit_msg_hook_file
-        chmod +x $local_commit_msg_hook_file
     fi
+
+    chmod +x $local_commit_msg_hook_file
     
 
     # 創建pre-push hook
@@ -33,10 +38,15 @@ set_global_hooks() {
     pre_push_hooks_content=$(curl -s "$remotePrefix/hooks/pre-push")
     local_pre_push_hook_file="$hooks_path/pre-push"
 
-    if ! grep -qF "$pre_push_hooks_content" "$local_pre_push_hook_file"; then
-        echo "$pre_push_hooks_content" >> $local_commit_msg_hook_file
-        chmod +x $local_pre_push_hook_file
+    if [[ -e $local_pre_push_hook_file ]]; then
+        touch $local_pre_push_hook_file
     fi
+
+    if ! grep -qF "$pre_push_hooks_content" "$local_pre_push_hook_file"; then
+        echo "$pre_push_hooks_content" >> $local_pre_push_hook_file
+    fi
+
+    chmod +x $local_pre_push_hook_file
     
 
     echo
