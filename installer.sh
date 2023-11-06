@@ -18,36 +18,34 @@ set_global_hooks() {
     fi
 
     # 創建commit-msg hook
-    
+
     commit_msg_hooks_content=$(curl -s "$remotePrefix/hooks/commit-msg")
     local_commit_msg_hook_file="$hooks_path/commit-msg"
 
-    if [[ -e $local_commit_msg_hook_file ]]; then
+    if [[ ! -e $local_commit_msg_hook_file ]]; then
         touch $local_commit_msg_hook_file
     fi
 
     if ! grep -qF "$commit_msg_hooks_content" "$local_commit_msg_hook_file"; then
-        echo "$commit_msg_hooks_content" >> $local_commit_msg_hook_file
+        echo "$commit_msg_hooks_content" >>$local_commit_msg_hook_file
     fi
 
     chmod +x $local_commit_msg_hook_file
-    
 
     # 創建pre-push hook
 
     pre_push_hooks_content=$(curl -s "$remotePrefix/hooks/pre-push")
     local_pre_push_hook_file="$hooks_path/pre-push"
 
-    if [[ -e $local_pre_push_hook_file ]]; then
+    if [[ ! -e $local_pre_push_hook_file ]]; then
         touch $local_pre_push_hook_file
     fi
 
     if ! grep -qF "$pre_push_hooks_content" "$local_pre_push_hook_file"; then
-        echo "$pre_push_hooks_content" >> $local_pre_push_hook_file
+        echo "$pre_push_hooks_content" >>$local_pre_push_hook_file
     fi
 
     chmod +x $local_pre_push_hook_file
-    
 
     echo
     echo "\033[33m全域Git hooks已被設置為 $hooks_path\033[0m"
