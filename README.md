@@ -17,4 +17,4 @@ sh -ec "$(curl -fsSL https://raw.githubusercontent.com/mizok/git-commands-logger
 1. 若有妥善安裝, 則每次打開`terminal`都會執行本腳本
 2. 若偵測到當前terminal的path為`git workspace`(有`git`版控的資料夾)時, 就會自動開始偵測並記錄`git`操作
 3. 本腳本的log檔案會存放在`$HOME/.git_commands_logger/logs/`底下
-4. 請注意, 若不使用偵測全域git hooks 功能, 本腳本將無法紀錄`VSCode`內建版控功能的git操作
+4. 請注意, 若不開啟偵測全域 `git hooks` 功能, 本腳本將無法紀錄`VSCode`內建版控 或 透過 `GUI` 發出的git操作
