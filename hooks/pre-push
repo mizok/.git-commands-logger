@@ -1,8 +1,14 @@
 remote=$1
 url=$2
+current_branch=""
+if git symbolic-ref -q --short HEAD >/dev/null 2>&1; then
+    current_branch=$(git symbolic-ref -q --short HEAD)
+else
+    current_branch=$(git rev-parse --short HEAD)
+fi
 root_path=${ZDOTDIR:-$HOME}
 log_directory="$root_path/.git_commands_logger/logs"
 repo_name=$(basename "$(git rev-parse --show-toplevel)")
 log_file="$log_directory/${repo_name}_git_commands.log"
 date_current=$(date "+%Y/%m/%d %H:%M:%S")
-echo "[$date_current] Push To Remote ($remote) Using GUI, URL: $url"  >> "$log_file"
+echo "[$date_current] Git push occurred on $current_branch (URL : $url) (Detected By Hooks)"  >> "$log_file"

@@ -1,8 +1,14 @@
 commit_msg_file=$1
+current_branch=""
+if git symbolic-ref -q --short HEAD >/dev/null 2>&1; then
+    current_branch=$(git symbolic-ref -q --short HEAD)
+else
+    current_branch=$(git rev-parse --short HEAD)
+fi
 root_path=${ZDOTDIR:-$HOME}
 log_directory="$root_path/.git_commands_logger/logs"
 commit_msg=$(cat "$commit_msg_file")
 repo_name=$(basename "$(git rev-parse --show-toplevel)")
 log_file="$log_directory/${repo_name}_git_commands.log"
 date_current=$(date "+%Y/%m/%d %H:%M:%S")
-echo "[$date_current] Commit from GUI : $commit_msg" >> "$log_file"
+echo "[$date_current] Git commit occurred on $current_branch (Detected By Hooks) : $commit_msg" >>"$log_file"
