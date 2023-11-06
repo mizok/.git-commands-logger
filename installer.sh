@@ -26,22 +26,22 @@ set_global_hooks() {
     chmod +x $hooks_path/pre-push
 
     echo
-    echo "\e[33m全域Git hooks已被設置為 $hooks_path\e[0m"
+    echo "\033[33m全域Git hooks已被設置為 $hooks_path\033[0m"
 }
 
-echo -e "\e[32m請問是否要設定全域Git hooks偵測功能 (y/n)?\e[0m"
+echo -e "\033[32m請問是否要設定全域Git hooks偵測功能 (y/n)?\033[0m"
 read userInput1
 if [[ $userInput1 == 'y' ]]; then
     echo
-    echo -e "\e[32m此設定將會改寫git的全域屬性core.hook , 是否確認這個改動 (y/n)?\e[0m"
+    echo -e "\033[32m此設定將會改寫git的全域屬性core.hook , 是否確認這個改動 (y/n)?\033[0m"
     read userInput2
     if [[ $userInput2 == 'y' ]]; then
         set_global_hooks
     else
-        echo "\e[36m已取消設置全域Git hooks偵測功能。\e[0m"
+        echo "\033[36m已取消設置全域Git hooks偵測功能。\033[0m"
     fi
 else
-    echo "\e[36m未設置全域Git hooks偵測功能。\e[0m"
+    echo "\033[36m未設置全域Git hooks偵測功能。\033[0m"
 fi
 
 # 下載腳本並保存到目標路徑
