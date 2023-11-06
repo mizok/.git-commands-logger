@@ -1,3 +1,4 @@
+# git command logger hook --start
 commit_msg_file=$1
 current_branch=""
 if git symbolic-ref -q --short HEAD >/dev/null 2>&1; then
@@ -12,3 +13,4 @@ repo_name=$(basename "$(git rev-parse --show-toplevel)")
 log_file="$log_directory/${repo_name}_git_commands.log"
 date_current=$(date "+%Y/%m/%d %H:%M:%S")
 echo "[$date_current] Git commit occurred on $current_branch (Detected By Hooks) : $commit_msg" >>"$log_file"
+# git command logger hook --end

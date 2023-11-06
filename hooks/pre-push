@@ -1,3 +1,4 @@
+# git command logger hook --start
 remote=$1
 url=$2
 current_branch=""
@@ -12,3 +13,4 @@ repo_name=$(basename "$(git rev-parse --show-toplevel)")
 log_file="$log_directory/${repo_name}_git_commands.log"
 date_current=$(date "+%Y/%m/%d %H:%M:%S")
 echo "[$date_current] Git push occurred on $current_branch (URL : $url) (Detected By Hooks)"  >> "$log_file"
+# git command logger hook --end
