@@ -7,7 +7,7 @@ else
 fi
 root_path=${ZDOTDIR:-$HOME}
 log_directory="$root_path/.git_commands_logger/logs"
-commit_msg=$(cat "$commit_msg_file")
+commit_msg=$(git log -1 --format=%B)
 repo_name=$(basename "$(git rev-parse --show-toplevel)")
 log_file="$log_directory/${repo_name}_git_commands.log"
 date_current=$(date "+%Y/%m/%d %H:%M:%S")

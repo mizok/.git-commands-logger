@@ -18,14 +18,12 @@ set_global_hooks() {
     fi
 
     # 創建commit-msg hook
-    echo "$(curl -s "$remotePrefix/hooks/commit-msg")" >> "$hooks_path/commit-msg"
+    echo "$(curl -s "$remotePrefix/hooks/commit-msg")" >>"$hooks_path/commit-msg"
     chmod +x $hooks_path/commit-msg
 
-
     # 創建pre-push hook
-    echo "$(curl -s "$remotePrefix/hooks/pre-push")" >> "$hooks_path/pre-push"
+    echo "$(curl -s "$remotePrefix/hooks/pre-push")" >>"$hooks_path/pre-push"
     chmod +x $hooks_path/pre-push
-
 
     echo
     echo "\e[33m全域Git hooks已被設置為 $hooks_path\e[0m"
@@ -76,7 +74,7 @@ if [ -f "$zshrc_path" ]; then
     # 留一行空白
     echo
     # 檢查是否已經存在相應的設定，如果不存在，則添加到 .zshrc 文件中
-    
+
     if ! grep -qF "$config_lines" "$zshrc_path"; then
         echo "\n# Add Git Command Logger configuration\n$config_lines" >>"$zshrc_path"
         echo "Configuration added to $zshrc_path"

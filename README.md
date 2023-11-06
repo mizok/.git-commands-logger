@@ -8,7 +8,7 @@ git command logger shell(zsh)
 請執行以下程序
 
 ```zsh
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/mizok/git-commands-logger/main/installer.sh)"
+sh -ec "$(curl -fsSL https://raw.githubusercontent.com/mizok/git-commands-logger/main/installer.sh)"
 ```
 
 
