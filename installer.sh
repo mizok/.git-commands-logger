@@ -10,7 +10,13 @@ remotePrefix="https://raw.githubusercontent.com/mizok/.git-commands-logger/main"
 
 set_global_hooks() {
     # 設置全域的Git hooks
-    hooks_path="$root_path/.git_hooks"
+    root_path=${ZDOTDIR:-$HOME}
+    original_hooks_path=$(git config --global core.hooksPath)
+    hooks_path=$original_hooks_path
+    if [[ ! -d $original_hooks_path || -n $original_hooks_path ]]; then
+        hooks_path="$root_path/.git_hooks"
+    fi
+    
     git config --global core.hooksPath $hooks_path
 
     if [ ! -d "$hooks_path" ]; then
