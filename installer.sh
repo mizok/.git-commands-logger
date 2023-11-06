@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # 生成目錄
 root_path=${ZDOTDIR:-$HOME}
 logger_directory="$root_path/.git_commands_logger"
@@ -7,8 +6,48 @@ if [ ! -d "$logger_directory" ]; then
     mkdir -p "$logger_directory"
 fi
 
+remotePrefix="https://raw.githubusercontent.com/mizok/.git-commands-logger/main"
+
+set_global_hooks() {
+    # 設置全域的Git hooks
+    hooks_path="$root_path/.git_hooks"
+    git config --global core.hooksPath $hooks_path
+
+    if [ ! -d "$hooks_path" ]; then
+        mkdir -p "$hooks_path"
+    fi
+
+    # 創建commit-msg hook
+    echo "$(curl -s "$remotePrefix/hooks/commit-msg")" >> "$hooks_path/commit-msg"
+    chmod +x $hooks_path/commit-msg
+
+
+    # 創建pre-push hook
+    echo "$(curl -s "$remotePrefix/hooks/pre-push")" >> "$hooks_path/pre-push"
+    chmod +x $hooks_path/pre-push
+
+
+    echo
+    echo "\e[33m全域Git hooks已被設置為 $hooks_path\e[0m"
+}
+
+echo -e "\e[32m請問是否要設定全域Git hooks偵測功能 (y/n)?\e[0m"
+read userInput1
+if [[ $userInput1 == 'y' ]]; then
+    echo
+    echo -e "\e[32m此設定將會改寫git的全域屬性core.hook , 是否確認這個改動 (y/n)?\e[0m"
+    read userInput2
+    if [[ $userInput2 == 'y' ]]; then
+        set_global_hooks
+    else
+        echo "\e[36m已取消設置全域Git hooks偵測功能。\e[0m"
+    fi
+else
+    echo "\e[36m未設置全域Git hooks偵測功能。\e[0m"
+fi
+
 # 下載腳本並保存到目標路徑
-git_commands_logger_url="https://raw.githubusercontent.com/mizok/.git-commands-logger/main/.git_commands_logger.sh"
+git_commands_logger_url=$remotePrefix".git_commands_logger.sh"
 download_path="$logger_directory/.git_commands_logger.sh"
 
 if [ -f "$download_path" ]; then
@@ -16,6 +55,9 @@ if [ -f "$download_path" ]; then
 fi
 
 curl -fsSL -o "$download_path" "$git_commands_logger_url"
+
+# 留一行空白
+echo
 
 # 檢查下載是否成功
 if [ $? -eq 0 ]; then
@@ -31,9 +73,12 @@ config_lines="gitCommandLogger=$root_path"'/.git_commands_logger/.git_commands_l
 source $gitCommandLogger'
 
 if [ -f "$zshrc_path" ]; then
+    # 留一行空白
+    echo
     # 檢查是否已經存在相應的設定，如果不存在，則添加到 .zshrc 文件中
+    
     if ! grep -qF "$config_lines" "$zshrc_path"; then
-        echo "\n# Add Git Command Logger configuration\n$config_lines" >> "$zshrc_path"
+        echo "\n# Add Git Command Logger configuration\n$config_lines" >>"$zshrc_path"
         echo "Configuration added to $zshrc_path"
     else
         echo "Configuration already exists in $zshrc_path"

@@ -155,7 +155,7 @@ function setup_git_commands_logging {
             if [[ $userInput ]]; then
                 # 處理日誌文件
                 process_log_file
-                echo "\e[32m已刪除 $days_to_keep_logs 天以前的舊日誌條目。\e[0m"
+                echo "\e[36m已刪除 $days_to_keep_logs 天以前的舊日誌條目。\e[0m"
             else
                 echo "取消刪除。"
             fi
