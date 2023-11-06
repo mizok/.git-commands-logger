@@ -47,7 +47,7 @@ else
 fi
 
 # 下載腳本並保存到目標路徑
-git_commands_logger_url=$remotePrefix".git_commands_logger.sh"
+git_commands_logger_url="$remotePrefix/.git_commands_logger.sh"
 download_path="$logger_directory/.git_commands_logger.sh"
 
 if [ -f "$download_path" ]; then
