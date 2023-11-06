@@ -29,11 +29,11 @@ set_global_hooks() {
     echo "\033[33m全域Git hooks已被設置為 $hooks_path\033[0m"
 }
 
-echo -e "\033[32m請問是否要設定全域Git hooks偵測功能 (y/n)?\033[0m"
+echo "\033[32m請問是否要設定全域Git hooks偵測功能 (y/n)?\033[0m"
 read userInput1
 if [[ $userInput1 == 'y' ]]; then
     echo
-    echo -e "\033[32m此設定將會改寫git的全域屬性core.hook , 是否確認這個改動 (y/n)?\033[0m"
+    echo "\033[32m此設定將會改寫git的全域屬性core.hook , 是否確認這個改動 (y/n)?\033[0m"
     read userInput2
     if [[ $userInput2 == 'y' ]]; then
         set_global_hooks
