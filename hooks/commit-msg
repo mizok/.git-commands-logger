@@ -1,5 +1,5 @@
 # git command logger hook --start
-commit_msg_file=$1
+commit_msg=$(cat $1)
 current_branch=""
 if git symbolic-ref -q --short HEAD >/dev/null 2>&1; then
     current_branch=$(git symbolic-ref -q --short HEAD)
@@ -8,7 +8,7 @@ else
 fi
 root_path=${ZDOTDIR:-$HOME}
 log_directory="$root_path/.git_commands_logger/logs"
-commit_msg=$(git log -1 --format=%B)
+commit_msg=$(echo "$commit_msg" | head -n 1)
 repo_name=$(basename "$(git rev-parse --show-toplevel)")
 log_file="$log_directory/${repo_name}_git_commands.log"
 date_current=$(date "+%Y/%m/%d %H:%M:%S")
