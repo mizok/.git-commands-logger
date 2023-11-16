@@ -65,29 +65,15 @@ function setup_git_commands_logging {
         # 檢查是否在Git工作區
         if [ -d .git ] || git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
             # 檢查是否在分支上
-            local current_branch=""
-            if git symbolic-ref -q --short HEAD >/dev/null 2>&1; then
-                current_branch=$(git symbolic-ref -q --short HEAD)
-            else
-                # 如果不在分支上，獲取當前commit點的SHA
-                current_branch=$(git rev-parse --short HEAD)
-            fi
+            local date_current=$(date "+%Y/%m/%d %H:%M:%S")
+            find_latest_command_timestamp
+            local last_entry_timestamp=$?
+            local current_timestamp=$(date -jf "%Y/%m/%d %H:%M:%S" "$date_current" +%s)
+            local time_diff=$(((current_timestamp - last_entry_timestamp) / 3600))
 
-            # 確認獲取的分支或commit點不為空
-            if [ -n "$current_branch" ]; then
-                local date_current=$(date "+%Y/%m/%d %H:%M:%S")
-                find_latest_command_timestamp
-                local last_entry_timestamp=$?
-                local current_timestamp=$(date -jf "%Y/%m/%d %H:%M:%S" "$date_current" +%s)
-                local time_diff=$(((current_timestamp - last_entry_timestamp) / 3600))
+            if [[ $command == "git "* || $command == "git."* ]]; then
+                echo "[$date_current] $command" >>"$log_file"
 
-                if [[ $command == "git "* || $command == "git."* ]]; then
-                    echo "[$date_current] $command" >>"$log_file"
-
-                    if [[ $command == "git co "* || $command == "git checkout "* || $command == "git switch "* ]]; then
-                        echo "$branch_remind_prefix  現在位於 $current_branch 分支/commit 點" >>"$log_file"
-                    fi
-                fi
             fi
         fi
     }

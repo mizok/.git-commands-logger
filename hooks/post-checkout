@@ -1,0 +1,16 @@
+# git command logger hook --start
+target_branch=$(git symbolic-ref -q --short HEAD)
+branch_remind_prefix=">>>>>"
+root_path=${ZDOTDIR:-$HOME}
+log_directory="$root_path/.git_commands_logger/logs"
+repo_name=$(basename "$(git rev-parse --show-toplevel)")
+log_file="$log_directory/${repo_name}_git_commands.log"
+current_branch_or_commit_point=""
+if git symbolic-ref -q --short HEAD >/dev/null 2>&1; then
+    current_branch_or_commit_point=$(git symbolic-ref -q --short HEAD)
+else
+    # 如果不在分支上，獲取當前commit點的SHA
+    current_branch_or_commit_point=$(git rev-parse --short HEAD)
+fi
+echo "$branch_remind_prefix  現在位於 $current_branch_or_commit_point 分支/commit 點" >>"$log_file"
+# git command logger hook --end

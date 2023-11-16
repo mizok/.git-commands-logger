@@ -53,6 +53,21 @@ set_global_hooks() {
 
     chmod +x $local_pre_push_hook_file
 
+        # 創建post-checkout hook
+
+    post_checkout_hooks_content=$(curl -s "$remotePrefix/hooks/post-checkout")
+    local_post_checkout_hook_file="$hooks_path/pre-push"
+
+    if [[ ! -e $local_post_checkout_hook_file ]]; then
+        touch $local_post_checkout_hook_file
+    fi
+
+    if ! grep -qF "$post_checkout_hooks_content" "$local_post_checkout_hook_file"; then
+        echo "$post_checkout_hooks_content" >>$local_post_checkout_hook_file
+    fi
+
+    chmod +x $local_post_checkout_hook_file
+
     echo
     echo "\033[33m全域Git hooks已被設置為 $hooks_path\033[0m"
 }
