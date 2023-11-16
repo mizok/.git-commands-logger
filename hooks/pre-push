@@ -9,8 +9,11 @@ else
 fi
 root_path=${ZDOTDIR:-$HOME}
 log_directory="$root_path/.git_commands_logger/logs"
+if [ ! -d "$log_directory" ]; then
+    mkdir -p "$log_directory"
+fi
 repo_name=$(basename "$(git rev-parse --show-toplevel)")
 log_file="$log_directory/${repo_name}_git_commands.log"
 date_current=$(date "+%Y/%m/%d %H:%M:%S")
-echo "[$date_current] Git push occurred on $current_branch (URL : $url) (Detected By Hooks)"  >> "$log_file"
+echo "[$date_current] Git push occurred on $current_branch (URL : $url) (Detected By Hooks)" >>"$log_file"
 # git command logger hook --end

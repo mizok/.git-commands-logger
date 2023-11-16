@@ -12,5 +12,8 @@ commit_msg=$(git log -1 --format=%B)
 repo_name=$(basename "$(git rev-parse --show-toplevel)")
 log_file="$log_directory/${repo_name}_git_commands.log"
 date_current=$(date "+%Y/%m/%d %H:%M:%S")
+if [ ! -d "$log_directory" ]; then
+    mkdir -p "$log_directory"
+fi
 echo "[$date_current] Git commit occurred on $current_branch (Detected By Hooks) : $commit_msg" >>"$log_file"
 # git command logger hook --end
