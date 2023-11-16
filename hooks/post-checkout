@@ -12,5 +12,5 @@ else
     # 如果不在分支上，獲取當前commit點的SHA
     current_branch_or_commit_point=$(git rev-parse --short HEAD)
 fi
-echo "$branch_remind_prefix  現在位於 $current_branch_or_commit_point 分支/commit 點" >>"$log_file"
+echo "$branch_remind_prefix  偵測到切換分支/commit的操作, 切換到 $current_branch_or_commit_point 分支/commit" >>"$log_file"
 # git command logger hook --end
