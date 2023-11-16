@@ -121,9 +121,11 @@ if [ -f "$zshrc_path" ]; then
     if ! grep -qF "$config_lines" "$zshrc_path"; then
         echo "\n# Add Git Command Logger configuration\n$config_lines" >>"$zshrc_path"
         echo "Configuration added to $zshrc_path"
+        echo "安裝完成，請關閉此終端機並重新開啟，腳本將會在下一次開啟終端機時生效。"
     else
         echo "Configuration already exists in $zshrc_path"
     fi
 else
     echo "$zshrc_path does not exist. Please create the .zshrc file manually and add the configuration."
 fi
+
