@@ -56,7 +56,7 @@ set_global_hooks() {
         # 創建post-checkout hook
 
     post_checkout_hooks_content=$(curl -s "$remotePrefix/hooks/post-checkout")
-    local_post_checkout_hook_file="$hooks_path/pre-push"
+    local_post_checkout_hook_file="$hooks_path/post-checkout"
 
     if [[ ! -e $local_post_checkout_hook_file ]]; then
         touch $local_post_checkout_hook_file
